@@ -44,10 +44,10 @@ class LinkedList<E> {
 
     public void pushBack(E elem) {
         Node<E> tail = head;
-        while (tail != null) {
+        while (tail.next != null) {
             tail = tail.next;
         }
-        tail = new Node<E>(elem);
+        tail.next = new Node<E>(elem);
     }
 
     public E popBack() {
@@ -129,6 +129,17 @@ class LinkedList<E> {
         head = prev;
     }
 
+    public void removeValue(E val) {
+        Node<E> temp = head;
+        while (temp.next != null) {
+            if (temp.next.data == val) {
+                temp.next = temp.next.next;
+                return;
+            }
+            temp = temp.next;
+        }
+    }
+
 }
 
 class Main {
@@ -145,7 +156,12 @@ class Main {
         System.out.printf("Size of %d\n", list.getSize());
         System.out.println(list.valueNFromEnd(2));
         System.out.println(list.isEmpty());
+        list.print();
+        list.pushBack(2);
+        list.pushBack(2);
         list.reverse();
+        list.print();
+        list.removeValue(2);
         list.print();
     }
 }
