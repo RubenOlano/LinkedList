@@ -1,50 +1,60 @@
 class LinkedList<E> {
-    LinkedList<E> next;
-    E elem;
+    Node<E> head;
 
-    public LinkedList(E elem) {
-        next = null;
-        this.elem = elem;
-    }
+    class Node<T> {
+        T data;
+        Node<T> next;
 
-    public LinkedList() {
-        this(null);
-    }
-
-    public boolean isEmpty() {
-        return next == null;
+        Node(T data) {
+            this.data = data;
+            next = null;
+        }
     }
 
     public int getSize() {
-        int size = 0;
-        LinkedList<E> head = this;
-        while (head.next != null) {
-            size++;
-            head = head.next;
+        Node<E> temp = this.head;
+        int count = 0;
+        while (temp != null) {
+            count++;
+            temp = temp.next;
         }
-        return size;
+        return count;
     }
 
-    public E valueAt(int index) throws ArrayIndexOutOfBoundsException {
-        int i = 0;
-        LinkedList<E> head = this;
-        while (head.next != null) {
-            if (i >= index) {
-                throw new ArrayIndexOutOfBoundsException("Index " + index + " is out of range");
-            }
-            if (i == index - 1)
-                return head.elem;
-            i++;
-            head = head.next;
-        }
-        return null;
+    public boolean isEmpty() {
+        return head == null;
     }
 
+    public void pushFront(E elem) {
+        if (head == null) {
+            head = new Node<E>(elem);
+            return;
+        }
+        Node<E> temp = new Node<E>(elem);
+        temp.next = head;
+        head = temp;
+    }
+
+    public E popFront() {
+        Node<E> temp = head.next;
+        E val = temp.data;
+        head = temp;
+        return val;
+    }
 }
 
 class Main {
     public static void main(String[] args) {
         LinkedList<Integer> list = new LinkedList<>();
-        System.out.printf("Size of %d", list.getSize());
+        System.out.println(list.isEmpty());
+        list.pushFront(2);
+        list.pushFront(3);
+        list.pushFront(5);
+        System.out.printf("Size of %d\n", list.getSize());
+        list.popFront();
+        System.out.printf("Size of %d\n", list.getSize());
+
+        System.out.println(list.isEmpty());
+
     }
 }
