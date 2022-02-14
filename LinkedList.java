@@ -88,9 +88,45 @@ class LinkedList<E> {
     public void print() {
         Node<E> temp = head;
         while (temp != null) {
-            System.out.println(temp.data);
+            System.out.print(temp.data + " ");
             temp = temp.next;
         }
+        System.out.println();
+    }
+
+    public void delete(int index) throws IndexOutOfBoundsException {
+        Node<E> temp = head;
+        for (int i = 0; i < index - 1; i++) {
+            if (temp == null && i < index) {
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds");
+            }
+            temp = temp.next;
+        }
+        temp.next = temp.next.next;
+    }
+
+    public E valueNFromEnd(int n) throws IndexOutOfBoundsException {
+        int size = getSize();
+        if (size <= n)
+            throw new IndexOutOfBoundsException("Index " + n + " is out of bounds");
+        Node<E> temp = head;
+        for (int i = 0; i < size - 1 - n; i++) {
+            temp = temp.next;
+        }
+        return temp.data;
+    }
+
+    public void reverse() {
+        Node<E> prev = null;
+        Node<E> curr = head;
+        Node<E> next = null;
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
     }
 
 }
@@ -104,9 +140,12 @@ class Main {
         System.out.printf("Size of %d\n", list.getSize());
         list.insert(2, 1);
         list.print();
+        list.delete(2);
+        list.print();
         System.out.printf("Size of %d\n", list.getSize());
-
+        System.out.println(list.valueNFromEnd(2));
         System.out.println(list.isEmpty());
-
+        list.reverse();
+        list.print();
     }
 }
