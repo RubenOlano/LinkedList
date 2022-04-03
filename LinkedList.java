@@ -1,7 +1,10 @@
-class LinkedList<E> {
-    Node<E> head;
+import java.util.Iterator;
 
-    class Node<T> {
+class LinkedList<T> implements Iterable<T> {
+    private Node<T> head;
+    private int size = 0;
+
+    private class Node<T> {
         T data;
         Node<T> next;
 
@@ -9,93 +12,92 @@ class LinkedList<E> {
             this.data = data;
             next = null;
         }
+
+        @Override
+        public String toString() {
+            return data.toString();
+        }
+    }
+
+    public void clear() {
+        head = null;
     }
 
     public int getSize() {
-        Node<E> temp = this.head;
-        int count = 0;
-        while (temp != null) {
-            count++;
-            temp = temp.next;
-        }
-        return count;
+        return size;
     }
 
     public boolean isEmpty() {
-        return head == null;
+        return getSize() == 0;
     }
 
-    public void pushFront(E elem) {
+    public void pushFront(T elem) {
         if (head == null) {
-            head = new Node<E>(elem);
+            head = new Node<T>(elem);
             return;
         }
-        Node<E> temp = new Node<E>(elem);
+        size++;
+        Node<T> temp = new Node<T>(elem);
         temp.next = head;
         head = temp;
     }
 
-    public E popFront() {
-        Node<E> temp = head.next;
-        E val = temp.data;
+    public T popFront() {
+        Node<T> temp = head.next;
+        T val = temp.data;
         head = temp;
+        size--;
         return val;
     }
 
-    public void pushBack(E elem) {
-        Node<E> tail = head;
+    public void pushBack(T elem) {
+        Node<T> tail = head;
         while (tail.next != null) {
             tail = tail.next;
         }
-        tail.next = new Node<E>(elem);
+        tail.next = new Node<T>(elem);
+        size++;
     }
 
-    public E popBack() {
-        Node<E> tail = head;
+    public T popBack() {
+        Node<T> tail = head;
         while (tail.next != null) {
             tail = tail.next;
         }
-        E val = tail.next.data;
+        T val = tail.next.data;
         tail.next = null;
+        size--;
         return val;
     }
 
-    public E front() {
+    public T front() {
         return head.data;
     }
 
-    public E back() {
-        Node<E> tail = head;
+    public T back() {
+        Node<T> tail = head;
         while (tail.next != null) {
             tail = tail.next;
         }
         return tail.data;
     }
 
-    public void insert(int index, E elem) throws IndexOutOfBoundsException {
-        Node<E> temp = head;
+    public void insert(int index, T elem) throws IndexOutOfBoundsException {
+        Node<T> temp = head;
         for (int i = 0; i < index - 1; i++) {
             if (temp == null && i < index) {
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds");
             }
             temp = temp.next;
         }
-        Node<E> newNode = new Node<E>(elem);
+        size++;
+        Node<T> newNode = new Node<T>(elem);
         newNode.next = temp.next;
         temp.next = newNode;
     }
 
-    public void print() {
-        Node<E> temp = head;
-        while (temp != null) {
-            System.out.print(temp.data + " ");
-            temp = temp.next;
-        }
-        System.out.println();
-    }
-
     public void delete(int index) throws IndexOutOfBoundsException {
-        Node<E> temp = head;
+        Node<T> temp = head;
         for (int i = 0; i < index - 1; i++) {
             if (temp == null && i < index) {
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds");
@@ -103,13 +105,14 @@ class LinkedList<E> {
             temp = temp.next;
         }
         temp.next = temp.next.next;
+        size--;
     }
 
-    public E valueNFromEnd(int n) throws IndexOutOfBoundsException {
+    public T valueNFromEnd(int n) throws IndexOutOfBoundsException {
         int size = getSize();
         if (size <= n)
             throw new IndexOutOfBoundsException("Index " + n + " is out of bounds");
-        Node<E> temp = head;
+        Node<T> temp = head;
         for (int i = 0; i < size - 1 - n; i++) {
             temp = temp.next;
         }
@@ -117,9 +120,9 @@ class LinkedList<E> {
     }
 
     public void reverse() {
-        Node<E> prev = null;
-        Node<E> curr = head;
-        Node<E> next = null;
+        Node<T> prev = null;
+        Node<T> curr = head;
+        Node<T> next = null;
         while (curr != null) {
             next = curr.next;
             curr.next = prev;
@@ -129,17 +132,50 @@ class LinkedList<E> {
         head = prev;
     }
 
-    public void removeValue(E val) {
-        Node<E> temp = head;
+    public void removeValue(T val) {
+        Node<T> temp = head;
         while (temp.next != null) {
             if (temp.next.data == val) {
                 temp.next = temp.next.next;
+                size--;
                 return;
             }
             temp = temp.next;
         }
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private Node<T> trav = head;
+
+            @Override
+            public boolean hasNext() {
+                return trav != null;
+            }
+
+            @Override
+            public T next() {
+                T val = trav.data;
+                trav = trav.next;
+                return val;
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Node<T> trav = head;
+        sb.append("[ ");
+        while (trav != null) {
+            sb.append(trav.data + ", ");
+            trav = trav.next;
+        }
+        sb.delete(sb.length() - 2, sb.length());
+        sb.append(" ]");
+        return sb.toString();
+    }
 }
 
 class Main {
@@ -150,18 +186,21 @@ class Main {
         list.pushFront(5);
         System.out.printf("Size of %d\n", list.getSize());
         list.insert(2, 1);
-        list.print();
+        System.out.println(list);
         list.delete(2);
-        list.print();
+        System.out.println(list);
         System.out.printf("Size of %d\n", list.getSize());
         System.out.println(list.valueNFromEnd(2));
         System.out.println(list.isEmpty());
-        list.print();
+        System.out.println(list);
+
         list.pushBack(2);
         list.pushBack(2);
         list.reverse();
-        list.print();
+        System.out.println(list);
+
         list.removeValue(2);
-        list.print();
+        System.out.println(list);
+
     }
 }
